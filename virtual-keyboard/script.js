@@ -20,7 +20,9 @@ const Keyboard = {
     shift: false,
     voice: false,
     volume: true,
-    lang: 'en'
+    lang: 'en',
+    keyboardInput: null,
+    cursorPosition: 0
   },
 
   layouts: layouts,
@@ -70,6 +72,11 @@ const Keyboard = {
       });
     });
 
+  },
+
+  _setCursorPosition(cursor) {
+    if (cursor < 0) cursor = 0;
+    this.properties.keyboardInput.setSelectionRange(cursor, cursor);
   },
 
   _createKeys() {
@@ -128,6 +135,9 @@ const Keyboard = {
 
             keyElement.addEventListener('click', () => {
               this._playSound('enter');
+
+              let currenCursor = this.properties.keyboardInput.selectionStart;
+              this._setCursorPosition(currenCursor - 1);
             });
 
             break;
@@ -137,6 +147,9 @@ const Keyboard = {
 
             keyElement.addEventListener('click', () => {
               this._playSound('enter');
+
+              let currenCursor = this.properties.keyboardInput.selectionStart;
+              this._setCursorPosition(currenCursor + 1);
             });
 
             break;
@@ -146,9 +159,15 @@ const Keyboard = {
             keyElement.innerHTML = createIconHTML('backspace');
 
             keyElement.addEventListener('click', () => {
-              this.properties.value = this.properties.value.substring(0, this.properties.value.length - 1);
+              let currenCursor = this.properties.keyboardInput.selectionStart;
+              const textBeforeCursor = this.properties.value.substring(0, currenCursor - 1);
+              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              this.properties.value = textBeforeCursor + textAfterCursor;
+
               this._playSound('backspace');
               this._triggerEvent('oninput');
+
+              this._setCursorPosition(currenCursor - 1);
             });
 
             break;
@@ -183,9 +202,15 @@ const Keyboard = {
             keyElement.innerHTML = createIconHTML('keyboard_return');
 
             keyElement.addEventListener('click', () => {
-              this.properties.value += '\n';
+              let currenCursor = this.properties.keyboardInput.selectionStart;
+              const textBeforeCursor = this.properties.value.substring(0, currenCursor);
+              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              this.properties.value = textBeforeCursor + '\n' + textAfterCursor;
+
               this._playSound('enter');
               this._triggerEvent('oninput');
+
+              this._setCursorPosition(currenCursor + 1);
             });
 
             break;
@@ -195,9 +220,15 @@ const Keyboard = {
             keyElement.innerHTML = createIconHTML('space_bar');
 
             keyElement.addEventListener('click', () => {
-              this.properties.value += ' ';
+              let currenCursor = this.properties.keyboardInput.selectionStart;
+              const textBeforeCursor = this.properties.value.substring(0, currenCursor);
+              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              this.properties.value = textBeforeCursor + ' ' + textAfterCursor;
+
               this._playSound('space');
               this._triggerEvent('oninput');
+
+              this._setCursorPosition(currenCursor + 1);
             });
 
             break;
@@ -217,13 +248,18 @@ const Keyboard = {
             const lang = this.properties.lang;
             keyElement.textContent = this.properties.shift ? this.layouts[lang][key].shift : this.layouts[lang][key].default;
             keyElement.dataset.code = key;
-
             keyElement.classList.add('keyboard__key--caps');
 
             keyElement.addEventListener('click', () => {
-              this.properties.value += keyElement.textContent;
+              let currenCursor = this.properties.keyboardInput.selectionStart;
+              const textBeforeCursor = this.properties.value.substring(0, currenCursor);
+              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              this.properties.value = textBeforeCursor + keyElement.textContent + textAfterCursor;
+
               this._playSound('key');
               this._triggerEvent('oninput');
+
+              this._setCursorPosition(currenCursor + 1);
             });
 
             break;

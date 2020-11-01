@@ -85,6 +85,25 @@ const Keyboard = {
       }
     });
 
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    this.recognition = new SpeechRecognition();
+    this.recognition.interimResults = true;
+
+    this.recognition.addEventListener('result', e => {
+      const transcript = Array.from(e.results)
+        .map(result => result[0])
+        .map(result => result.transcript)
+        .join('');
+
+      const poopScript = transcript.replace(/poop|poo|shit|dump/gi, '💩') + ' ';
+
+      if (e.results[0].isFinal) {
+        this.properties.value += poopScript;
+        //this.properties.keyboardInput.textContent = this.properties.value;
+        this._triggerEvent('oninput');
+        this._setCursorPosition(this.properties.value.length);
+      }
+    });
   },
 
   _setCursorPosition(cursor) {
@@ -127,6 +146,18 @@ const Keyboard = {
               this.properties.voice = !this.properties.voice;
               this._playSound('voice');
               keyElement.classList.toggle('keyboard__key--active', this.properties.voice);
+
+              this.recognition.lang = this.properties.lang === 'en' ? 'en-US' : 'ru';
+              //this.properties.voice ? this.recognition.start() : {  }
+
+              if (this.properties.voice) {
+                this.recognition.addEventListener('end', this.recognition.start);
+                this.recognition.start();
+              } else {
+                this.recognition.removeEventListener('end', this.recognition.start);
+                this.recognition.stop();
+              }
+
             });
 
             break;

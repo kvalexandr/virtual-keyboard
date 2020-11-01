@@ -72,6 +72,19 @@ const Keyboard = {
       });
     });
 
+    document.addEventListener('keydown', (e) => {
+      e.preventDefault();
+      const btnKey = document.querySelector(`[data-code=${e.code}]`);
+      if (btnKey) {
+        btnKey.click();
+        btnKey.classList.add('keyboard__key--press');
+
+        setTimeout(function () {
+          btnKey.classList.remove('keyboard__key--press');
+        }, 100);
+      }
+    });
+
   },
 
   _setCursorPosition(cursor) {
@@ -89,10 +102,11 @@ const Keyboard = {
     this.printCodes.forEach(line => {
       line.forEach(key => {
         const keyElement = document.createElement('button');
-        const insertLineBreak = ['backspace', ']', 'enter', '?'].indexOf(key) !== -1;
 
         keyElement.setAttribute('type', 'button');
         keyElement.classList.add('keyboard__key');
+
+        keyElement.dataset.code = key;
 
         switch (key) {
           case 'Lang':
@@ -247,7 +261,7 @@ const Keyboard = {
           default:
             const lang = this.properties.lang;
             keyElement.textContent = this.properties.shift ? this.layouts[lang][key].shift : this.layouts[lang][key].default;
-            keyElement.dataset.code = key;
+            //keyElement.dataset.code = key;
             keyElement.classList.add('keyboard__key--caps');
 
             keyElement.addEventListener('click', () => {

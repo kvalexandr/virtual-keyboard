@@ -189,17 +189,12 @@ const Keyboard = {
 
           default:
             const lang = this.properties.lang;
-            if (this.layouts[lang][key]) {
-              keyElement.textContent = this.properties.shift ? this.layouts[lang][key].shift : this.layouts[lang][key].default;
-              keyElement.dataset.code = key;
-            } else {
-              keyElement.textContent = key;
-            }
+            keyElement.textContent = this.properties.shift ? this.layouts[lang][key].shift : this.layouts[lang][key].default;
+            keyElement.dataset.code = key;
 
             keyElement.classList.add('keyboard__key--caps');
 
             keyElement.addEventListener('click', () => {
-              //this.properties.value += this.properties.capsText ? keyElement.textContent.toUpperCase() : keyElement.textContent.toLowerCase();
               this.properties.value += keyElement.textContent;
               this._triggerEvent('oninput');
             });
@@ -224,12 +219,6 @@ const Keyboard = {
 
   _toggleCapsLock() {
     this.properties.capsLock = !this.properties.capsLock;
-    // for (const key of this.elements.keys) {
-    //   if (key.classList.contains('keyboard__key--caps')) {
-    //     this.properties.capsText = (!this.properties.capsLock && this.properties.shift || this.properties.capsLock && !this.properties.shift) || false;
-    //     key.textContent = this.properties.capsText ? key.textContent.toUpperCase() : key.textContent.toLowerCase();
-    //   }
-    // }
     this._toggleKeyboard();
   },
 
@@ -243,7 +232,7 @@ const Keyboard = {
     this._toggleKeyboard();
   },
 
-  _toggleKeyboard(isShift = false) {
+  _toggleKeyboard() {
     for (const key of this.elements.keys) {
       if (key.classList.contains('keyboard__key--caps')) {
         const lang = this.properties.lang;

@@ -103,6 +103,12 @@ const Keyboard = {
     });
   },
 
+  _getCursor() {
+    const startCursor = this.properties.keyboardInput.selectionStart;
+    const endCursor = this.properties.keyboardInput.selectionEnd;
+    return { startCursor, endCursor };
+  },
+
   _setCursorPosition(cursor) {
     if (cursor < 0) cursor = 0;
     this.properties.keyboardInput.setSelectionRange(cursor, cursor);
@@ -200,15 +206,16 @@ const Keyboard = {
             keyElement.innerHTML = createIconHTML('backspace');
 
             keyElement.addEventListener('click', () => {
-              let currenCursor = this.properties.keyboardInput.selectionStart;
-              const textBeforeCursor = this.properties.value.substring(0, currenCursor - 1);
-              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              let { startCursor, endCursor } = this._getCursor();
+              if (startCursor === endCursor) startCursor -= 1;
+              const textBeforeCursor = this.properties.value.substring(0, startCursor);
+              const textAfterCursor = this.properties.value.substring(endCursor, this.properties.value.length);
               this.properties.value = textBeforeCursor + textAfterCursor;
 
               this._playSound('backspace');
               this._triggerEvent('oninput');
 
-              this._setCursorPosition(currenCursor - 1);
+              this._setCursorPosition(startCursor);
             });
 
             break;
@@ -243,15 +250,15 @@ const Keyboard = {
             keyElement.innerHTML = createIconHTML('keyboard_return');
 
             keyElement.addEventListener('click', () => {
-              let currenCursor = this.properties.keyboardInput.selectionStart;
-              const textBeforeCursor = this.properties.value.substring(0, currenCursor);
-              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              let { startCursor, endCursor } = this._getCursor();
+              const textBeforeCursor = this.properties.value.substring(0, startCursor);
+              const textAfterCursor = this.properties.value.substring(endCursor, this.properties.value.length);
               this.properties.value = textBeforeCursor + '\n' + textAfterCursor;
 
               this._playSound('enter');
               this._triggerEvent('oninput');
 
-              this._setCursorPosition(currenCursor + 1);
+              this._setCursorPosition(startCursor + 1);
             });
 
             break;
@@ -261,15 +268,15 @@ const Keyboard = {
             keyElement.innerHTML = createIconHTML('space_bar');
 
             keyElement.addEventListener('click', () => {
-              let currenCursor = this.properties.keyboardInput.selectionStart;
-              const textBeforeCursor = this.properties.value.substring(0, currenCursor);
-              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              let { startCursor, endCursor } = this._getCursor();
+              const textBeforeCursor = this.properties.value.substring(0, startCursor);
+              const textAfterCursor = this.properties.value.substring(endCursor, this.properties.value.length);
               this.properties.value = textBeforeCursor + ' ' + textAfterCursor;
 
               this._playSound('space');
               this._triggerEvent('oninput');
 
-              this._setCursorPosition(currenCursor + 1);
+              this._setCursorPosition(startCursor + 1);
             });
 
             break;
@@ -291,15 +298,15 @@ const Keyboard = {
             keyElement.classList.add('keyboard__key--caps');
 
             keyElement.addEventListener('click', () => {
-              let currenCursor = this.properties.keyboardInput.selectionStart;
-              const textBeforeCursor = this.properties.value.substring(0, currenCursor);
-              const textAfterCursor = this.properties.value.substring(currenCursor, this.properties.value.length);
+              let { startCursor, endCursor } = this._getCursor();
+              const textBeforeCursor = this.properties.value.substring(0, startCursor);
+              const textAfterCursor = this.properties.value.substring(endCursor, this.properties.value.length);
               this.properties.value = textBeforeCursor + keyElement.textContent + textAfterCursor;
 
               this._playSound('key');
               this._triggerEvent('oninput');
 
-              this._setCursorPosition(currenCursor + 1);
+              this._setCursorPosition(startCursor + 1);
             });
 
             break;

@@ -59,6 +59,7 @@ const Keyboard = {
       element.addEventListener('focus', (e) => {
         this.open(element.value, currentValue => {
           element.value = currentValue;
+          this.properties.keyboardInput.focus();
         });
 
         // Blinking cursor

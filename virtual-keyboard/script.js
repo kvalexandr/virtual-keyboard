@@ -96,9 +96,12 @@ const Keyboard = {
       const poopScript = transcript.replace(/poop|poo|shit|dump/gi, '💩') + ' ';
 
       if (e.results[0].isFinal) {
-        this.properties.value += poopScript;
+        let { startCursor, endCursor } = this._getCursor();
+        const textBeforeCursor = this.properties.value.substring(0, startCursor);
+        const textAfterCursor = this.properties.value.substring(endCursor, this.properties.value.length);
+        this.properties.value = textBeforeCursor + poopScript + textAfterCursor;
         this._triggerEvent('oninput');
-        this._setCursorPosition(this.properties.value.length);
+        this._setCursorPosition(endCursor + poopScript.length);
       }
     });
   },

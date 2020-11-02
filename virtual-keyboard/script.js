@@ -4,8 +4,7 @@ const Keyboard = {
   elements: {
     main: null,
     keyContainer: null,
-    keys: [],
-    keyboardInput: null
+    keys: []
   },
 
   eventHandlers: {
@@ -21,8 +20,7 @@ const Keyboard = {
     voice: false,
     volume: true,
     lang: 'en',
-    keyboardInput: null,
-    cursorPosition: 0
+    keyboardInput: null
   },
 
   layouts: layouts,
@@ -53,9 +51,9 @@ const Keyboard = {
       // Capslock checking with a physical keyboard
       element.addEventListener('click', (e) => {
         this.properties.keyboardInput = element;
-        this.properties.capsLock = !e.getModifierState('CapsLock');
-        this._toggleCapsLock();
-        document.querySelector('.caps').classList.toggle('keyboard__key--active', this.properties.capsLock)
+        // this.properties.capsLock = !e.getModifierState('CapsLock');
+        // this._toggleCapsLock();
+        // document.querySelector('.caps').classList.toggle('keyboard__key--active', this.properties.capsLock)
       });
 
       element.addEventListener('focus', (e) => {
@@ -334,6 +332,13 @@ const Keyboard = {
 
   _toggleLang() {
     this.properties.lang = this.properties.lang === 'ru' ? 'en' : 'ru';
+    if (this.properties.voice) {
+      this.recognition.removeEventListener('end', this.recognition.start);
+      this.recognition.stop();
+      this.recognition.lang = this.properties.lang === 'en' ? 'en-US' : 'ru';
+      this.recognition.addEventListener('end', this.recognition.start);
+      //this.recognition.start();
+    }
     this._playSound(this.properties.lang);
     this._toggleKeyboard();
   },
